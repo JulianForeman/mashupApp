@@ -1,0 +1,62 @@
+.profilecontainer{
+  display: flex;
+  justify-content: center;
+  width:100%;
+  background-image: url(https://picsum.photos/1438/221);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.filler{
+  flex-grow: 1;
+}
+
+.profile_image_container{
+  display: flex;
+  flex-basis: 20%;
+  margin-left: 5em;
+  margin-top: 3em;
+}
+
+.profile_image{
+  border-radius: 50%;
+  border: 5px solid black;
+  height: 100%;
+  width: 100%;
+  margin-top: -1.5em;
+}
+
+.profile_stats_container{
+  flex-basis: 20%;
+  margin-left: 1em;
+  margin-top: 2em;
+  margin-top: 3em;
+}
+
+.user_info_container{
+  margin-top: -1.75em;
+}
+
+.user_info{
+  font-size: 1.5em;
+}
+
+.rank_container{
+  flex-basis: 15%;
+  justify-content: center;
+  text-align: center;
+  margin-right: 5em;
+  margin-top: 3em;
+}
+
+.rank_image{
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  margin-top: -2em;
+}
+
+#rank_name{
+  margin-top: -0.5em;
+  font-size: 1.5em;
+}

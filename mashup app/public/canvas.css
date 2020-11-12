@@ -1,0 +1,21 @@
+#canvas {
+    border: 1px solid red;
+}
+
+.canvas_wrapper{
+  display: flex;
+  height: 36em;
+  margin-left: 2em;
+  margin-top: 1em;
+  margin-right: 2em;
+}
+
+.canvas_tools{
+  flex-basis: 1%;
+  margin-right: 2em;
+}
+
+#canvas_area{
+  flex-grow: 1;
+  overflow: hidden
+}

@@ -1,0 +1,19 @@
+{
+  "name": "mashup-app",
+  "version": "1.0.0",
+  "description": "An application for people to create/share/like/edit art and get ranked according to their scores.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "runServer": "node routes.js"
+  },
+  "author": "Julian Foreman",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-fileupload": "^1.2.0",
+    "express-handlebars": "^5.1.0",
+    "mysql": "^2.18.1"
+  }
+}
