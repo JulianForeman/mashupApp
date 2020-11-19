@@ -3,6 +3,9 @@ const app = express()
 const port = 3000
 const fileUpload = require('express-fileUpload');
 const connection = require('./database');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+const session = require('express-session');
 
 var exphbs  = require('express-handlebars');
 
@@ -11,10 +14,12 @@ app.use(express.urlencoded());
 app.engine('handlebars', exphbs());
 app.set('view engine', 'handlebars');
 
-app.use(function (req, res, next) {
-  console.log('Time:', Date.now())
-  next()
-});
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}))
 
 app.use(fileUpload({
   limits: { fileSize: 2 * 1024 * 1024 },
@@ -30,16 +35,50 @@ app.get('/register', (req, res) => {
   res.render('register');
 })
 
-app.get('/upload', (req, res) => {
-  res.render('upload');
-});
+app.post('/register', (req, res) => {
+  var context = {};
+  var username = req.body.username;
+  var email = req.body.email;
+  var password = req.body.password;
+  var confirm_password = req.body.confirm_password;
 
-app.post('/upload', (req,res) => {
-  console.log(req.files.fileupload);
-  req.files.fileupload.mv('public/tmp/' + req.files.fileupload.name, () => {
-    res.render('upload');
-  });
-});
+  if (!username || !email || !password || !confirm_password) {
+    context.missing_info = true;
+    res.render('register', context);
+  }
+  else{
+    connection.query('SELECT * FROM `Users` WHERE `username` = ?', [username], async (error, results) => {
+      if(error){
+        throw error;
+      }
+      if (results[0]) {
+        context.username_exists = true;
+        res.render('register', context);
+      }
+      if(password === confirm_password){
+        var hashed_pass = await bcrypt.hash(password, saltRounds);
+        connection.query('INSERT INTO `Users` (username, email, password, rank_id) VALUES (?, ?, ?, 1)', [username, email, hashed_pass], (error, results) => {
+          if (error) {
+            throw error;
+          }
+          req.session.user_id = results.insertId;
+          res.redirect('/');
+        });
+      }
+    })
+  }
+})
+
+// app.get('/upload', (req, res) => {
+//   res.render('upload');
+// });
+//
+// app.post('/upload', (req,res) => {
+//   console.log(req.files.fileupload);
+//   req.files.fileupload.mv('public/tmp/' + req.files.fileupload.name, () => {
+//     res.render('upload');
+//   });
+// });
 
 app.get('/login', (req,res) => res.render('login'));
 
@@ -48,7 +87,7 @@ app.post('/login', (req,res) => {
   var username = req.body.username;
   var password = req.body.password;
   var email = req.params.email;
-  if(!email || !passowrd || !username){
+  if(!email || !password || !username){
     context.missing_info = true;
     res.render('login', context);
     }
