@@ -52,3 +52,7 @@
 .already_logged_in{
   flex-basis: 100%;
 }
+
+.form_header{
+  color: #E8A435;
+}

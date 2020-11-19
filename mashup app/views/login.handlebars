@@ -1,0 +1,22 @@
+
+<div class="flex_container">
+  <div class="register_container">
+    <h1 class="form_header">Sign In</h1>
+    <form class="register_form"  method="post">
+      <input type="text" name="username" value="" id="username" placeholder="Username">
+      <input type="password" name="password" value="" id="password" placeholder="Password">
+      <input type="submit" name="submit" id="login" value="Login">
+    </form>
+    {{#if missing_info}}
+      <p>Please fill in all fields!</p>
+    {{/if}}
+    {{#if no_found_user}}
+      <p>Could not find an account with that username.</p>
+    {{/if}}
+    {{#if invalid_credentials}}
+      <p>Incorrect password</p>
+    {{/if}}
+
+    <p class="already_logged_in">Not signed up? <a class="already_logged_in" href="/register">Register</a></p>
+  </div>
+</div>
