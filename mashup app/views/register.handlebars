@@ -1,11 +1,14 @@
+<script type="text/javascript" src="/js/register.js" defer></script>
+
 <div class="flex_container">
   <div class="register_container">
     <form class="register_form"  method="post">
-      <input type="text" name="username" value="" placeholder="Username">
-      <input type="text" name="email" value="" placeholder="Email">
-      <input type="text" name="password" value="" placeholder="Password">
-      <input type="text" name="confirm_password" value="" placeholder="Confirm Password">
-      <input type="submit" name="submit" value="Register">
+      <input type="text" name="username" value="" id="username" placeholder="Username">
+      <input type="email" name="email" value="" id="email" placeholder="Email">
+      <input type="password" name="password" value="" id="password" placeholder="Password">
+      <input type="password" name="confirm_password" value="" id="confirm_password" placeholder="Confirm Password">
+      <input type="submit" name="submit" id="register" value="Register">
     </form>
+    <p class="already_logged_in">Already registered? <a class="already_logged_in" href="/login">Log in</a></p>
   </div>
 </div>
