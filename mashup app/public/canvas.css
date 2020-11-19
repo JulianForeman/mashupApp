@@ -1,5 +1,5 @@
 #canvas {
-    border: 2px solid #35b5e8;
+    border: 2px solid #E8A435;
 }
 
 .canvas_wrapper{
@@ -20,7 +20,8 @@
 #canvas_area{
   flex-grow: 1;
   height: 100%;
-  overflow: hidden
+  overflow: hidden;
+  background-color: #ffffff;
 }
 
 #upload, #clear, #pencil, #color, #size, #eraser{
