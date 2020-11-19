@@ -2,6 +2,7 @@
 
 <div class="flex_container">
   <div class="register_container">
+    <h1 class='form_header'>Sign Up</h1>
     <form class="register_form"  method="post">
       <input type="text" name="username" value="" id="username" placeholder="Username">
       <input type="email" name="email" value="" id="email" placeholder="Email">
@@ -9,6 +10,12 @@
       <input type="password" name="confirm_password" value="" id="confirm_password" placeholder="Confirm Password">
       <input type="submit" name="submit" id="register" value="Register">
     </form>
+    {{#if missing_info}}
+      <p>Please fill in all fields!</p>
+    {{/if}}
+    {{#if username_exists}}
+      <p>An account with that username already exists.</p>
+    {{/if}}
     <p class="already_logged_in">Already registered? <a class="already_logged_in" href="/login">Log in</a></p>
   </div>
 </div>

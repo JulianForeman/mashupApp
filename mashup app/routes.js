@@ -15,10 +15,7 @@ app.engine('handlebars', exphbs());
 app.set('view engine', 'handlebars');
 
 app.use(session({
-  secret: 'keyboard cat',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false }
+  secret: 'secret_canvas'
 }))
 
 app.use(fileUpload({
@@ -32,6 +29,9 @@ app.get('/', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
+  if (req.session.user_id) {
+    res.redirect('/')
+  }
   res.render('register');
 })
 
@@ -55,7 +55,7 @@ app.post('/register', (req, res) => {
         context.username_exists = true;
         res.render('register', context);
       }
-      if(password === confirm_password){
+      if(password === confirm_password && context.username_exists !== true){
         var hashed_pass = await bcrypt.hash(password, saltRounds);
         connection.query('INSERT INTO `Users` (username, email, password, rank_id) VALUES (?, ?, ?, 1)', [username, email, hashed_pass], (error, results) => {
           if (error) {
@@ -80,21 +80,26 @@ app.post('/register', (req, res) => {
 //   });
 // });
 
-app.get('/login', (req,res) => res.render('login'));
+app.get('/login', (req,res) => {
+  if (req.session.user_id) {
+    res.redirect('/')
+  }
+  res.render('login')
+});
 
 app.post('/login', (req,res) => {
   var context = {};
   var username = req.body.username;
   var password = req.body.password;
-  var email = req.params.email;
-  if(!email || !password || !username){
+  if(!password || !username){
     context.missing_info = true;
     res.render('login', context);
     }
   else{
-    connection.query('SELECT * FROM `users` WHERE `email` = ?', [email], (error,results) => {
+    connection.query('SELECT * FROM `Users` WHERE `username` = ?', [username], (error,results) => {
       if(error)
         throw error;
+        console.log('error 1');
       if(results[0]){
         bcrypt.compare(password, results[0].password, (error,result) => {
           if(error)
@@ -103,10 +108,15 @@ app.post('/login', (req,res) => {
             req.session.user_id = results[0].id;
             res.redirect('/');
           }
+          else{
+            context.invalid_credentials = true;
+            res.render('login', context);
+          }
         })
       }
-      else{
-        res.render('login', {invalid_credentials:true});
+      else {
+        context.no_found_user = true;
+        res.render('login', context);
       }
   })
 }
