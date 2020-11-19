@@ -29,6 +29,17 @@
   margin-bottom: 1em;
 }
 
+#upload{
+  background-color: #E8A435;
+  color: #855103;
+  height: 2em;
+  width: 100%;
+  border-style: none;
+  border: 2px solid #855103;
+  box-shadow: 2px 3px #2a72b5;
+  border-radius: 25px;
+}
+
 #pencil, #eraser, #brush, #clear{
   height: 4em;
   width:4em;
