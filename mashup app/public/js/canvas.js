@@ -10,6 +10,7 @@
   var eraser = document.getElementById('eraser');
   var sizeSlider = document.getElementById('size');
   var colourPicker = document.getElementById('color');
+  var uploadButton = document.getElementById('upload');
 
   clear_button.addEventListener('click', () => ctx.clearRect(0,0,canvas.width, canvas.height));
 
@@ -85,6 +86,35 @@
   canvas.addEventListener('mouseleave', up);
   canvas.addEventListener('touchend', up);
   canvas.addEventListener('touchleave', up);
+
+  uploadButton.addEventListener('click', () => {
+    uploadButton.disabled = true;
+    var formData = new FormData();
+    canvas.toBlob(blob => {
+      formData.append('image', blob);
+      let xhr = new XMLHttpRequest();
+      xhr.open("post", document.location.origin + "/upload");
+      xhr.onreadystatechange = () => {
+        console.log(xhr.readyState);
+        if(xhr.readyState === xhr.DONE){
+          uploadButton.disabled = false;
+          if (xhr.responseText === 'NOT_LOGGED_IN'){
+            alert("You must be logged in to post an image!");
+          }
+          if (xhr.responseText.substr(0,3) === "OK:") {
+            var image_id = xhr.responseText.substr(3);
+            document.location.href = document.location.origin + '/image/' + image_id;
+          }
+        }
+      }
+      xhr.onerror = error =>
+      {
+        console.error(error);
+        uploadButton.disabled = fals;
+      }
+      xhr.send(formData);
+    })
+  })
 
   window.onload = () => {
     var size = canvas.parentElement.getBoundingClientRect();

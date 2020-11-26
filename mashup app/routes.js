@@ -69,16 +69,39 @@ app.post('/register', (req, res) => {
   }
 })
 
-// app.get('/upload', (req, res) => {
-//   res.render('upload');
-// });
-//
-// app.post('/upload', (req,res) => {
-//   console.log(req.files.fileupload);
-//   req.files.fileupload.mv('public/tmp/' + req.files.fileupload.name, () => {
-//     res.render('upload');
-//   });
-// });
+app.get('/upload', (req, res) => {
+  res.render('upload');
+});
+
+app.post('/upload', (req,res) => {
+  console.log(req.files.fileupload);
+  if (!req.session.user_id) {
+    return res.send('NOT_LOGGED_IN');
+  }
+  connection.query('INSERT INTO `Posts` (`user_id`, `likes`, `mashups`) VALUES (?, 0, 0)', [req.session.user_id], (error,results) => {
+    if (error) {
+      throw error;
+    }
+    let insert_id = results.insertId;
+    req.files.image.mv('public/images/' + insert_id + '.png');
+    res.send('OK:' + insert_id);
+  })
+});
+
+app.get('/image/:image_id', (req,res,next) => {
+  let image_id = req.params.image_id;
+  connection.query('SELECT `Posts`.*, `Users`.`username` FROM `Posts` LEFT JOIN `Users` ON `Users`.`id` = `Posts`.`user_id` WHERE `Posts`.`id` = ?', [image_id], (error, results, next) => {
+    if (error) {
+      throw error;
+    }
+    if(!results[0]){
+      next
+    }
+    else{
+      res.render('image', {image:results[0]});
+    }
+  })
+})
 
 app.get('/login', (req,res) => {
   if (req.session.user_id) {
@@ -129,6 +152,18 @@ app.get('/ranked', (req, res) => {
 
 app.get('/canvas', (req, res) => {
   res.render('canvas')
+})
+
+app.post('canvas', (req, res) => {
+  var context = {};
+  if (req.session.user_id) {
+
+  }
+  else{
+    context.not_logged_in = true;
+    res.render('canvas', context);
+
+  }
 })
 
 app.get('/profile', (req, res) => {
