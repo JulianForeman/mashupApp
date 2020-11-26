@@ -25,14 +25,14 @@ app.use(fileUpload({
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
-  res.render('home')
+  return res.render('home')
 });
 
 app.get('/register', (req, res) => {
   if (req.session.user_id) {
-    res.redirect('/')
+    return res.redirect('/')
   }
-  res.render('register');
+  return res.render('register');
 })
 
 app.post('/register', (req, res) => {
@@ -44,7 +44,7 @@ app.post('/register', (req, res) => {
 
   if (!username || !email || !password || !confirm_password) {
     context.missing_info = true;
-    res.render('register', context);
+    return res.render('register', context);
   }
   else{
     connection.query('SELECT * FROM `Users` WHERE `username` = ?', [username], async (error, results) => {
@@ -53,7 +53,7 @@ app.post('/register', (req, res) => {
       }
       if (results[0]) {
         context.username_exists = true;
-        res.render('register', context);
+        return res.render('register', context);
       }
       if(password === confirm_password && context.username_exists !== true){
         var hashed_pass = await bcrypt.hash(password, saltRounds);
@@ -62,7 +62,7 @@ app.post('/register', (req, res) => {
             throw error;
           }
           req.session.user_id = results.insertId;
-          res.redirect('/');
+          return res.redirect('/');
         });
       }
     })
@@ -70,11 +70,10 @@ app.post('/register', (req, res) => {
 })
 
 app.get('/upload', (req, res) => {
-  res.render('upload');
+  return res.render('upload');
 });
 
 app.post('/upload', (req,res) => {
-  console.log(req.files.fileupload);
   if (!req.session.user_id) {
     return res.send('NOT_LOGGED_IN');
   }
@@ -82,6 +81,7 @@ app.post('/upload', (req,res) => {
     if (error) {
       throw error;
     }
+    connection.query('UPDATE `Users` SET `total_posts` = `total_posts` +1 WHERE `id` = ?', [req.session.user_id]);
     let insert_id = results.insertId;
     req.files.image.mv('public/images/' + insert_id + '.png');
     res.send('OK:' + insert_id);
@@ -89,25 +89,33 @@ app.post('/upload', (req,res) => {
 });
 
 app.get('/image/:image_id', (req,res,next) => {
+  let context = {};
   let image_id = req.params.image_id;
   connection.query('SELECT `Posts`.*, `Users`.`username` FROM `Posts` LEFT JOIN `Users` ON `Users`.`id` = `Posts`.`user_id` WHERE `Posts`.`id` = ?', [image_id], (error, results, next) => {
-    if (error) {
-      throw error;
-    }
-    if(!results[0]){
-      next
-    }
-    else{
-      res.render('image', {image:results[0]});
-    }
+      if (error) {
+        throw error;
+      }
+      if(!results[0]){
+        next
+      }
+      else{
+        context.image = results[0];
+        connection.query('SELECT * FROM `Users` WHERE `id` = ?', [context.image.user_id], (error, results2, next) => {
+          context.user = results2[0];
+          if (context.user.id == req.session.user_id) {
+            context.own_image = true;
+          }
+          return res.render('image', context);
+        })
+      }
   })
 })
 
 app.get('/login', (req,res) => {
   if (req.session.user_id) {
-    res.redirect('/')
+    return res.redirect('/')
   }
-  res.render('login')
+  return res.render('login')
 });
 
 app.post('/login', (req,res) => {
@@ -116,30 +124,29 @@ app.post('/login', (req,res) => {
   var password = req.body.password;
   if(!password || !username){
     context.missing_info = true;
-    res.render('login', context);
+    return res.render('login', context);
     }
   else{
     connection.query('SELECT * FROM `Users` WHERE `username` = ?', [username], (error,results) => {
       if(error)
         throw error;
-        console.log('error 1');
       if(results[0]){
         bcrypt.compare(password, results[0].password, (error,result) => {
           if(error)
             throw error;
           if(result){
             req.session.user_id = results[0].id;
-            res.redirect('/');
+            return res.redirect('/');
           }
           else{
             context.invalid_credentials = true;
-            res.render('login', context);
+            return res.render('login', context);
           }
         })
       }
       else {
         context.no_found_user = true;
-        res.render('login', context);
+        return res.render('login', context);
       }
   })
 }
@@ -147,28 +154,47 @@ app.post('/login', (req,res) => {
 })
 
 app.get('/ranked', (req, res) => {
-  res.render('ranked')
+  return res.render('ranked')
 })
 
 app.get('/canvas', (req, res) => {
-  res.render('canvas')
+  return res.render('canvas')
 })
 
 app.post('canvas', (req, res) => {
   var context = {};
   if (req.session.user_id) {
-
   }
   else{
     context.not_logged_in = true;
-    res.render('canvas', context);
-
+    return res.render('canvas', context);
   }
 })
 
 app.get('/profile', (req, res) => {
-  res.render('profile')
+  var context = {};
+  if (!req.session.user_id) {
+    return res.redirect('/login')
+  }
+  connection.query('SELECT `id` FROM `Posts` WHERE `user_id` = ? ORDER BY `id` DESC', [req.session.user_id], (error, results) => {
+    connection.query('SELECT * FROM `Users` LEFT JOIN `Ranks` on `Users`.`rank_id` = `Ranks`.`id` WHERE `Users`.`id` = ?', [req.session.user_id], (error, results2) => {
+      if (error) {
+        throw error;
+      }
+      if (results === null) {
+        context.user = results2[0];
+        context.no_images = true;
+        return res.render('profile', context);
+      }
+      else{
+        context.user = results2[0];
+        context.images = results;
+        return res.render('profile', context);
+      }
+    })
+  })
 })
+
 
 //app.get('/user/:username', (req, res, next))
 
