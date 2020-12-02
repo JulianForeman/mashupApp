@@ -5,6 +5,7 @@
   background-image: url(https://picsum.photos/1438/221);
   background-repeat: no-repeat;
   background-size: cover;
+  border: 2px solid #E8A435;
 }
 
 .filler{
@@ -39,6 +40,21 @@
 
 .user_info{
   font-size: 1.5em;
+  color: #855103;
+  background-color: #E8A435;
+  border-radius: 20px;
+  width: 50%;
+  border: 2px solid #855103;
+  text-align: center;
+}
+
+#edit_account{
+  background-color: #E8A435;
+  color: #855103;
+  height: 2em;
+  width: 40%;
+  border: 2px solid #855103;
+  border-radius: 25px;
 }
 
 .rank_container{
@@ -50,13 +66,65 @@
 }
 
 .rank_image{
-  height: 100%;
+  height: 16em;;
   width: 100%;
-  border-radius: 50%;
   margin-top: -2em;
 }
 
 #rank_name{
-  margin-top: -0.5em;
+  color: #855103;
+  margin-top: -0.3em;
   font-size: 1.5em;
+  background-color: #E8A435;
+  border-radius: 20px;
+  width: 100%;
+  border: 2px solid #855103;
+  text-align: center;
+}
+
+.profile-header{
+  text-align: center;
+  font-size: 3em;
+  color: #E8A435;
+  text-shadow: 2px 2px #2a72b5;
+}
+
+.feed-flex{
+  display: flex;
+}
+
+#feed{
+  flex-grow: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.feed-item{
+  flex-basis: 28%;
+  margin: 1em;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.feed-image{
+  width:100%;
+  background-color: #ffffff;
+  height: 100%;
+  border: 2px solid #E8A435;
+}
+
+.feed-image:hover, .feed-item:hover{
+  cursor: pointer;
+}
+
+.feed-controls{
+  flex-basis: 100%;
+  margin-right: 0.5em;
+}
+
+.feed-control{
+  height: 1.5em;
+  width: 1.5em;
 }
