@@ -1,19 +1,38 @@
+<script src="/js/profile.js" charset="utf-8" defer></script>
+
 <div class="profilecontainer">
   <div class="profile_image_container">
     <img class="profile_image" src="https://picsum.photos/200" alt="">
   </div>
   <div class="profile_stats_container">
     <div class="user_info_container">
-      <p class="user_info">Username</p>
-      <p class="user_info">Posts</p>
-      <p class="user_info">Likes</p>
-      <p class="user_info">Mashups</p>
+      <p class="user_info">{{user.username}}</p>
+      <p class="user_info">Posts: {{user.total_posts}}</p>
+      <p class="user_info">Likes: {{user.total_likes}}</p>
+      <p class="user_info">Mashups: {{user.total_mashups}}</p>
       <button type="button" name="edit_account" id="edit_account">Edit Account</button>
     </div>
   </div>
   <div class="filler"></div>
   <div class="rank_container">
-    <img class="rank_image" src="https://www.flaticon.com/svg/static/icons/svg/473/473430.svg" alt="">
-    <p id="rank_name">Rank</p>
+    <img class="rank_image" src="{{user.rank_image}}" alt="">
+    <p id="rank_name">{{user.rank_name}} Artist</p>
+  </div>
+</div>
+
+<h1 class="profile-header">Your Feed</h1>
+<div class="feed-flex">
+  <div id="feed">
+    {{#if no_images}}
+      <h1 class='form_header'>You haven't uploaded any images yet!</h1>
+    {{/if}}
+    {{#each images}}
+    <div id={{this.id}} class="feed-item">
+      <img class="feed-image" src="/images/{{this.id}}.png" alt="">
+      <div class="feed-controls">
+      </div>
+    </div>
+    {{/each}}
+    </div>
   </div>
 </div>

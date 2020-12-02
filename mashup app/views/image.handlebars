@@ -1,6 +1,9 @@
-<h1>IMAGE PAGE {{image.id}}</h1>
 
 <figure>
   <img src="/images/{{image.id}}.png" alt="">
-  <figcaption>By: {{image.username}}</figcaption>
+  {{#if own_image}}
+    <figcaption>By: You!</figcaption>
+  {{else}}
+    <figcaption>By: {{image.username}}</figcaption>
+  {{/if}}
 </figure>
