@@ -25,7 +25,24 @@ app.use(fileUpload({
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
-  return res.render('home')
+  var context = {};
+  connection.query('SELECT `id` FROM `Posts` ORDER BY `id` DESC', (error, results) => {
+    connection.query('SELECT * FROM `Users` LEFT JOIN `Ranks` on `Users`.`rank_id` = `Ranks`.`id`', (error, results2) => {
+      if (error) {
+        throw error;
+      }
+      if (results === null) {
+        context.user = results2[0];
+        context.no_images = true;
+        return res.render('home', context);
+      }
+      else{
+        context.user = results2[0];
+        context.images = results;
+        return res.render('home', context);
+      }
+    })
+  })
 });
 
 app.get('/register', (req, res) => {

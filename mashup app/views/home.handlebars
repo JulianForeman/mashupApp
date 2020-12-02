@@ -1,1 +1,17 @@
-This is the home page
+
+<h1>Welcome to Mashup</h1>
+
+<div id="homefeedwrapper">
+  <div id="homefeed">
+    {{#if no_images}}
+      <h1 class='form_header'>You haven't uploaded any images yet!</h1>
+    {{/if}}
+    {{#each images}}
+    <div id={{this.id}} class="feed-item">
+      <img class="feed-image" src="/images/{{this.id}}.png" alt="">
+      <div class="feed-controls">
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</div>
