@@ -1,0 +1,10 @@
+#homefeedwrapper{
+  display: flex;
+}
+
+#homefeed{
+  flex-grow: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
