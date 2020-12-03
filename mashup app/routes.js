@@ -31,6 +31,14 @@ app.get('/', (req, res) => {
   }
   else{
     context.not_logged_in = false;
+    connection.query('SELECT `post_id` FROM `Likes` WHERE `user_id` = ?', [req.session.user_id], (error, results) => {
+      if(error){
+        throw error;
+      }
+      else{
+        console.log(results);
+      }
+    })
   }
   connection.query('SELECT `id` FROM `Posts` ORDER BY `id` DESC', (error, results) => {
     connection.query('SELECT * FROM `Users` LEFT JOIN `Ranks` on `Users`.`rank_id` = `Ranks`.`id`', (error, results2) => {
@@ -238,6 +246,28 @@ app.post('canvas', (req, res) => {
     context.not_logged_in = true;
     return res.render('canvas', context);
   }
+})
+
+app.get('/mashup/:image_id', (req,res) => {
+  let context = {};
+  let image_id = req.params.image_id;
+  connection.query('SELECT `Posts`.*, `Users`.`username` FROM `Posts` LEFT JOIN `Users` ON `Users`.`id` = `Posts`.`user_id` WHERE `Posts`.`id` = ?', [image_id], (error, results, next) => {
+      if (error) {
+        throw error;
+      }
+      if(!results[0]){
+        next;
+      }
+      else{
+        context.image = results[0];
+        let image_url = `/images/${context.image.id}.png`;
+        context.image.image_url = image_url;
+        connection.query('SELECT * FROM `Users` WHERE `id` = ?', [context.image.user_id], (error, results2, next) => {
+          context.user = results2[0];
+          return res.render('canvas', context);
+        })
+      }
+  })
 })
 
 app.get('/profile', (req, res) => {

@@ -103,6 +103,7 @@
 .feed-item{
   flex-basis: 28%;
   margin: 1em;
+  margin-top: 2em;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -117,14 +118,4 @@
 
 .feed-image:hover, .feed-item:hover{
   cursor: pointer;
-}
-
-.feed-controls{
-  flex-basis: 100%;
-  margin-right: 0.5em;
-}
-
-.feed-control{
-  height: 1.5em;
-  width: 1.5em;
 }

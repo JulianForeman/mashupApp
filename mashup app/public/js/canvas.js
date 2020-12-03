@@ -11,10 +11,19 @@
   var sizeSlider = document.getElementById('size');
   var colourPicker = document.getElementById('color');
   var uploadButton = document.getElementById('upload');
+  var size = canvas.parentElement.getBoundingClientRect();
+  canvas.height = size.height-3;
+  canvas.width = size.width-3;
 
-  clear_button.addEventListener('click', () =>
-  ctx.clearRect(0,0,canvas.width, canvas.height
-  ));
+  var image_source_url = canvas.dataset.imageSourceUrl;
+  let source_image = null;
+
+  clear_button.addEventListener('click', () => {
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+    if (source_image) {
+      ctx.drawImage(source_image, 0, 0);
+    }
+  });
 
   var drawWidth = 5;
   var drawColour = '#000000';
@@ -127,11 +136,13 @@
     })
   })
 
-  window.onload = () => {
-    var size = canvas.parentElement.getBoundingClientRect();
-    canvas.height = size.height-3;
-    canvas.width = size.width-3;
-  };
+  if (image_source_url) {
+    source_image = new Image();
+    source_image.addEventListener('load', () => {
+      ctx.drawImage(source_image, 0, 0);
+    })
+    source_image.src = image_source_url;
+  }
 
   window.addEventListener('resize', () => {
     var size = canvas.parentElement.getBoundingClientRect();
