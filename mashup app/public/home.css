@@ -8,3 +8,8 @@
   flex-wrap: wrap;
   justify-content: center;
 }
+
+.home_header{
+  text-align: center;
+  font-size: 5em;
+}

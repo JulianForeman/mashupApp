@@ -26,6 +26,12 @@ app.use(express.static('public'));
 
 app.get('/', (req, res) => {
   var context = {};
+  if (req.session.user_id == null) {
+    context.not_logged_in = true;
+  }
+  else{
+    context.not_logged_in = false;
+  }
   connection.query('SELECT `id` FROM `Posts` ORDER BY `id` DESC', (error, results) => {
     connection.query('SELECT * FROM `Users` LEFT JOIN `Ranks` on `Users`.`rank_id` = `Ranks`.`id`', (error, results2) => {
       if (error) {
@@ -46,14 +52,27 @@ app.get('/', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
+  var context = {};
+  if (req.session.user_id == null) {
+    context.not_logged_in = true;
+  }
+  else{
+    context.not_logged_in = false;
+  }
   if (req.session.user_id) {
     return res.redirect('/')
   }
-  return res.render('register');
+  return res.render('register', context);
 })
 
 app.post('/register', (req, res) => {
   var context = {};
+  if (req.session.user_id == null) {
+    context.not_logged_in = true;
+  }
+  else{
+    context.not_logged_in = false;
+  }
   var username = req.body.username;
   var email = req.body.email;
   var password = req.body.password;
@@ -106,7 +125,13 @@ app.post('/upload', (req,res) => {
 });
 
 app.get('/image/:image_id', (req,res,next) => {
-  let context = {};
+  var context = {};
+  if (req.session.user_id == null) {
+    context.not_logged_in = true;
+  }
+  else{
+    context.not_logged_in = false;
+  }
   let image_id = req.params.image_id;
   connection.query('SELECT `Posts`.*, `Users`.`username` FROM `Posts` LEFT JOIN `Users` ON `Users`.`id` = `Posts`.`user_id` WHERE `Posts`.`id` = ?', [image_id], (error, results, next) => {
       if (error) {
@@ -129,14 +154,27 @@ app.get('/image/:image_id', (req,res,next) => {
 })
 
 app.get('/login', (req,res) => {
+  var context = {};
+  if (req.session.user_id == null) {
+    context.not_logged_in = true;
+  }
+  else{
+    context.not_logged_in = false;
+  }
   if (req.session.user_id) {
     return res.redirect('/')
   }
-  return res.render('login')
+  return res.render('login', context)
 });
 
 app.post('/login', (req,res) => {
   var context = {};
+  if (req.session.user_id == null) {
+    context.not_logged_in = true;
+  }
+  else{
+    context.not_logged_in = false;
+  }
   var username = req.body.username;
   var password = req.body.password;
   if(!password || !username){
@@ -171,16 +209,30 @@ app.post('/login', (req,res) => {
 })
 
 app.get('/ranked', (req, res) => {
-  return res.render('ranked')
+  var context = {};
+  if (req.session.user_id == null) {
+    context.not_logged_in = true;
+  }
+  else{
+    context.not_logged_in = false;
+  }
+  return res.render('ranked', context)
 })
 
 app.get('/canvas', (req, res) => {
-  return res.render('canvas')
+  var context = {};
+  if (req.session.user_id == null) {
+    context.not_logged_in = true;
+  }
+  else{
+    context.not_logged_in = false;
+  }
+  return res.render('canvas', context)
 })
 
 app.post('canvas', (req, res) => {
-  var context = {};
   if (req.session.user_id) {
+    context.not_logged_in = false;
   }
   else{
     context.not_logged_in = true;

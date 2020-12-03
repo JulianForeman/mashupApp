@@ -12,7 +12,9 @@
   var colourPicker = document.getElementById('color');
   var uploadButton = document.getElementById('upload');
 
-  clear_button.addEventListener('click', () => ctx.clearRect(0,0,canvas.width, canvas.height));
+  clear_button.addEventListener('click', () =>
+  ctx.clearRect(0,0,canvas.width, canvas.height
+  ));
 
   var drawWidth = 5;
   var drawColour = '#000000';
@@ -53,6 +55,9 @@
     var using_pencil = true;
     drawWidth = 2;
     drawStyle = 'square';
+    pencil.className = "selected";
+    paintbrush.className = "";
+    eraser.className = "";
   });
 
   paintbrush.addEventListener('click', () => {
@@ -60,11 +65,17 @@
     drawWidth = sizeSlider.value;
     drawColour = colourPicker.value;
     drawStyle = 'round';
+    paintbrush.className = "selected";
+    eraser.className = "";
+    pencil.className = "";
   });
 
   eraser.addEventListener('click', () => {
     drawWidth = sizeSlider.value;
     drawColour = '#ffffff';
+    eraser.className = "selected";
+    paintbrush.className = "";
+    pencil.className = "";
   });
 
   sizeSlider.addEventListener('change', () => {
