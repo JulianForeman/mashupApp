@@ -152,9 +152,25 @@ app.get('/image/:image_id', (req,res,next) => {
         context.image = results[0];
         connection.query('SELECT * FROM `Users` WHERE `id` = ?', [context.image.user_id], (error, results2, next) => {
           context.user = results2[0];
-          if (context.user.id == req.session.user_id) {
+          if (context.image.user_id == req.session.user_id) {
             context.own_image = true;
           }
+          connection.query('SELECT `user_id` FROM `Likes` WHERE `post_id` = ?', [image_id], (error, result) => {
+            if (error) {
+              throw error
+            }
+            if(!result[0]){
+              context.liked = false;
+            }
+            else{
+              if (result[0].user_id != req.session.user_id || result[0].user_id == null) {
+                context.liked = false;
+              }
+              else{
+                context.liked = true;
+              }
+            }
+          })
           return res.render('image', context);
         })
       }
@@ -249,7 +265,13 @@ app.post('canvas', (req, res) => {
 })
 
 app.get('/mashup/:image_id', (req,res) => {
-  let context = {};
+  var context = {};
+  if (req.session.user_id == null) {
+    context.not_logged_in = true;
+  }
+  else{
+    context.not_logged_in = false;
+  }
   let image_id = req.params.image_id;
   connection.query('SELECT `Posts`.*, `Users`.`username` FROM `Posts` LEFT JOIN `Users` ON `Users`.`id` = `Posts`.`user_id` WHERE `Posts`.`id` = ?', [image_id], (error, results, next) => {
       if (error) {
