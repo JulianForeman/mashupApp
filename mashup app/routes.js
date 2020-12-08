@@ -46,6 +46,7 @@ app.get('/', (req, res) => {
         throw error;
       }
       if (results === null) {
+        results2[0].password = null;
         context.user = results2[0];
         context.no_images = true;
         return res.render('home', context);
@@ -199,15 +200,18 @@ app.post('/login', (req,res) => {
             throw error;
           if(result){
             req.session.user_id = results[0].id;
+            results[0].password = null;
             return res.redirect('/');
           }
           else{
+            results[0] = null;
             context.invalid_credentials = true;
             return res.render('login', context);
           }
         })
       }
       else {
+        results[0] = null;
         context.no_found_user = true;
         return res.render('login', context);
       }
@@ -224,8 +228,47 @@ app.get('/ranked', (req, res) => {
   else{
     context.not_logged_in = false;
   }
-  return res.render('ranked', context)
+
+  connection.query("SELECT `username`, `profile_image`, `season_score`, `rank_image`, `rank_name` FROM `Users` LEFT JOIN `Ranks` on `Users`.`rank_id` = `Ranks`.`id` ORDER BY `season_score` DESC", (error, results) => {
+    if (error) {
+      throw error;
+    }
+    if (results[0] == null) {
+      context.noUsers = true;
+      return res.render('ranked', context);
+    }
+    else{
+      context.users = results;
+      return res.render('ranked', context);
+    }
+    return res.render('ranked', context);
+  })
 })
+
+app.get('/ranked/:rankName', (req,res) => {
+  var context = {};
+  if (req.session.user_id == null) {
+    context.not_logged_in = true;
+  }
+  else{
+    context.not_logged_in = false;
+  }
+  connection.query("SELECT `username`, `profile_image`, `season_score`, `rank_image`, `rank_name` FROM `Users` LEFT JOIN `Ranks` on `Users`.`rank_id` = `Ranks`.`id` WHERE `Ranks`.`rank_name` = ? ORDER BY `season_score` DESC", [req.params.rankName], (error, results) => {
+    if (error) {
+      throw error;
+    }
+    if (results[0] == null) {
+      context.noUsers = true;
+      return res.render('ranked', context);
+    }
+    else{
+      context.users = results;
+      return res.render('ranked', context);
+    }
+    return res.render('ranked', context);
+  })
+})
+
 
 app.get('/canvas', (req, res) => {
   var context = {};
