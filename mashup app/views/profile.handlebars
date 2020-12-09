@@ -10,7 +10,9 @@
       <p class="user_info">Posts: {{user.total_posts}}</p>
       <p class="user_info">Likes: {{user.total_likes}}</p>
       <p class="user_info">Mashups: {{user.total_mashups}}</p>
+      {{#if own_profile}}
       <button type="button" name="edit_account" id="edit_account">Edit Account</button>
+      {{/if}}
     </div>
   </div>
   <div class="filler"></div>
@@ -20,7 +22,7 @@
   </div>
 </div>
 
-<h1 class="profile-header">Your Feed</h1>
+<h1 class="profile-header">{{user.username}}'s Feed</h1>
 <div class="feed-flex">
   <div id="feed">
     {{#if no_images}}

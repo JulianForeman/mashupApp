@@ -319,26 +319,72 @@ app.get('/profile', (req, res) => {
     return res.redirect('/login')
   }
   connection.query('SELECT `id` FROM `Posts` WHERE `user_id` = ? ORDER BY `id` DESC', [req.session.user_id], (error, results) => {
-    connection.query('SELECT * FROM `Users` LEFT JOIN `Ranks` on `Users`.`rank_id` = `Ranks`.`id` WHERE `Users`.`id` = ?', [req.session.user_id], (error, results2) => {
+    connection.query('SELECT `Users`.`id`, `Users`.`username`, `Users`.total_posts,`Users`.`total_mashups`, `Users`.total_likes, `Ranks`.rank_name, `Ranks`.rank_image FROM `Users` LEFT JOIN `Ranks` on `Users`.`rank_id` = `Ranks`.`id` WHERE `Users`.`id` = ?', [req.session.user_id], (error, results2) => {
       if (error) {
         throw error;
       }
       if (results === null) {
         context.user = results2[0];
         context.no_images = true;
+        if (req.session.user_id == context.user.id) {
+          context.own_profile = true;
+        }
         return res.render('profile', context);
       }
       else{
         context.user = results2[0];
         context.images = results;
+        if (req.session.user_id == context.user.id) {
+          context.own_profile = true;
+        }
         return res.render('profile', context);
       }
     })
   })
 })
 
-
-//app.get('/user/:username', (req, res, next))
+app.get('/user/:username', (req,res) => {
+  var context = {};
+  if (!req.session.user_id) {
+    return res.redirect('/login')
+  }
+  connection.query('SELECT `Users`.`id` FROM `Users` WHERE `username` = ?', [req.params.username], (error,results) => {
+    if (error) {
+      throw error
+    }
+    if (!results[0]) {
+      res.redirect('/')
+    }
+    else{
+      var user_profile = results[0];
+      console.log(user_profile);
+      console.log(user_profile.id);
+      connection.query('SELECT `Posts`.`id` FROM `Posts` LEFT JOIN `Users` on `Posts`.`user_id` = `Users`.`id` WHERE `Users`.`id` = ? ORDER BY `id` DESC', [user_profile.id], (error, results) => {
+        connection.query('SELECT `Users`.`id`, `Users`.`username`, `Users`.total_posts,`Users`.`total_mashups`, `Users`.total_likes, `Ranks`.rank_name, `Ranks`.rank_image FROM `Users` LEFT JOIN `Ranks` on `Users`.`rank_id` = `Ranks`.`id` WHERE `Users`.`id` = ?', [user_profile.id], (error, results2) => {
+          if (error) {
+            throw error;
+          }
+          if (results === null) {
+            context.user = results2[0];
+            context.no_images = true;
+            if (req.session.user_id == context.user.id) {
+              context.own_profile = true;
+            }
+            return res.render('profile', context);
+          }
+          else{
+            context.user = results2[0];
+            context.images = results;
+            if (req.session.user_id == context.user.id) {
+              context.own_profile = true;
+            }
+            return res.render('profile', context);
+          }
+        })
+      })
+    }
+  });
+})
 
 
 

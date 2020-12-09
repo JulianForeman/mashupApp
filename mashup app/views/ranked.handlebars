@@ -27,7 +27,7 @@
     </div>
   </div>
 
-  <div class="users_ladder">
+  <div id="users_ladder">
 
     {{#if noUsers}}
     <h1 class="form_header">No users are in this rank at the moment</h1>
@@ -36,9 +36,9 @@
     {{#each users}}
     <div id={{this.username}} class="user_container">
       <img class="user_image" src={{this.profile_image}} alt="">
-      <p class="username {{this.rank_name}}">Username: {{this.username}}</p>
-      <p class="user_rank {{this.rank_name}}">Rank: {{this.rank_name}}</p>
-      <p class="user_score {{this.rank_name}}">Season Score: {{this.season_score}}</p>
+      <p class="username {{this.rank_name}} user">Username: {{this.username}}</p>
+      <p class="user_rank {{this.rank_name}} user">Rank: {{this.rank_name}}</p>
+      <p class="user_score {{this.rank_name}} user">Season Score: {{this.season_score}}</p>
       <img class="user_rank_image" src={{this.rank_image}} alt="">
     </div>
     {{/each}}
