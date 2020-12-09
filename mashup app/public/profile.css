@@ -57,6 +57,15 @@
   border-radius: 25px;
 }
 
+#logout{
+  background-color: #E8A435;
+  color: #855103;
+  height: 2em;
+  width: 40%;
+  border: 2px solid #855103;
+  border-radius: 25px;
+}
+
 .rank_container{
   flex-basis: 15%;
   justify-content: center;
