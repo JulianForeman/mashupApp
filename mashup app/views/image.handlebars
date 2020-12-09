@@ -2,9 +2,9 @@
 
 <div class="image_page_wrapper">
   <div class="image_container">
-    <div class="author_info">
-      <img class="author_image" src="{{user.profile_image}}" alt="">
-      <p class="authorname">{{image.username}}</p>
+    <div id="author_info">
+      <img class="author_image" id={{user.id}} src="{{user.profile_image}}" alt="">
+      <p class="authorname" id={{image.username}}>{{image.username}}</p>
     </div>
     <div class="drawn_image_container">
         <img id="drawnimage" src="/images/{{image.id}}.png" alt="">
@@ -14,11 +14,8 @@
     {{else}}
     <div class="feed_controls_wrapper">
       <div class="feedcontrols">
-        {{#if liked}}
         <img id="heartliked" src="https://www.flaticon.com/svg/static/icons/svg/833/833472.svg" alt="">
-        {{else}}
         <img id="heart" src="https://www.flaticon.com/svg/static/icons/svg/833/833300.svg" alt="">
-        {{/if}}
         <img id="edit" src="https://www.flaticon.com/svg/static/icons/svg/1159/1159633.svg" alt="">
       </div>
     </div>

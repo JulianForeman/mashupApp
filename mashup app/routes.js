@@ -274,6 +274,12 @@ app.get('/mashup/:image_id', (req,res) => {
   }
   let image_id = req.params.image_id;
   connection.query('SELECT `Posts`.*, `Users`.`username` FROM `Posts` LEFT JOIN `Users` ON `Users`.`id` = `Posts`.`user_id` WHERE `Posts`.`id` = ?', [image_id], (error, results, next) => {
+    connection.query('UPDATE `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` SET `Users`.`season_score` = `Users`.`season_score` + 1, `Users`.`total_score` = `Users`.`total_score` + 1 WHERE `Posts`.`id` = ?', [parseInt(image_id)], (error,unusedResults) => {
+      if (error) {
+        throw error;
+      }
+    });
+
       if (error) {
         throw error;
       }
@@ -321,7 +327,44 @@ app.get('/profile', (req, res) => {
 
 
 
+// api routes
 
+app.get('/api/like/:post_id',(req,res) =>
+ {
+ let post_id = parseInt(req.params.post_id);
+ if (!req.session.user_id)
+    return res.json({success:false,error:'NOT_LOGGED_IN'});
+ connection.query('INSERT INTO `Likes` (`user_id`,`post_id`) VALUES (?,?)',[req.session.user_id,post_id],(error,results) =>
+   {
+   if (error){
+     return res.json({success:false,error});
+   }
+  connection.query('UPDATE `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` SET `Users`.`season_score` = `Users`.`season_score` + 3, `Users`.`total_score` = `Users`.`total_score` + 3 WHERE `Posts`.`id` = ?', [post_id], (error,results) => {
+    if (error) {
+      return res.json({success:false,error});
+    }
+  })
+  return res.json({success:true}); // return the db results as JSON.
+   });
+ });
+
+ app.get('/api/unlike/:post_id',(req,res) =>
+  {
+  let post_id = parseInt(req.params.post_id);
+  if (!req.session.user_id)
+     return res.json({success:false,error:'NOT_LOGGED_IN'});
+  connection.query('DELETE FROM `Likes` WHERE `post_id` = ? AND `user_id` = ?',[post_id, req.session.user_id],(error,results) =>
+    {
+    if (error)
+      return res.json({success:false,error});
+      connection.query('UPDATE `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` SET `Users`.`season_score` = `Users`.`season_score` - 3, `Users`.`total_score` = `Users`.`total_score` - 3 WHERE `Posts`.`id` = ?', [post_id], (error,results) => {
+        if (error) {
+          throw error;
+        }
+      })
+    return res.json({success:true}); // return the db results as JSON.
+    });
+  });
 
 
 
