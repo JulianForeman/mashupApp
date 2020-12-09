@@ -1,0 +1,106 @@
+.image_page_wrapper{
+  display: flex;
+}
+
+.image_container{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+#author_info{
+  width: 40%;
+  flex-direction: row;
+  flex-wrap: wrap;
+  display: flex;
+}
+
+.authorname{
+  background-color: #fff;
+  color: #E8A435;
+  border: 2px solid #E8A435;;
+  border-radius: 25px;
+  font-size: 2em;
+  flex-basis: 40%;
+  width: 7em;
+  height: 1.5em;
+  text-align: center;
+  margin-left: 0.5em;
+}
+
+.authorname:hover{
+  cursor: pointer;
+}
+
+.author_image{
+  border-radius: 50%;
+  border: 3px solid black;
+  height: 5em;
+  width: 5em;
+  margin-top: 1em;
+  margin-left: 1em;
+}
+
+.drawn_image_container{
+  display: flex;
+  justify-content: center;
+}
+
+#drawnimage{
+  text-align: center;
+  border: 2px solid #E8A435;
+  background-color: #fff;
+}
+
+.feed_controls_wrapper{
+  align-self: center;
+  display: flex;
+  justify-content: flex-end;
+  width: 80%;
+}
+
+.feedcontrols{
+  display: flex;
+  flex-basis: 80%;
+  align-items: flex-end;
+  justify-content: flex-end;
+  width: 10%;
+}
+
+#edit{
+  height:3em;
+  width:3em;
+  background-color: #E8A435;
+  padding-left:0.5em;
+  padding-right: 0.5em;
+}
+
+#edit:hover{
+  cursor: pointer;
+}
+
+#heart{
+  height:3em;
+  width:3em;
+  background-color: #E8A435;
+  padding-left: 0.5em;
+}
+
+#heart:hover{
+  cursor: pointer;
+}
+
+#heartliked{
+  height:3em;
+  width:3em;
+  background-color: #E8A435;
+  padding-left: 0.5em;
+}
+
+#heartliked:hover{
+  cursor: pointer;
+}
+
+.hide{
+  display: none;
+}

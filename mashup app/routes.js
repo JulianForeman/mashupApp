@@ -153,9 +153,25 @@ app.get('/image/:image_id', (req,res,next) => {
         context.image = results[0];
         connection.query('SELECT * FROM `Users` WHERE `id` = ?', [context.image.user_id], (error, results2, next) => {
           context.user = results2[0];
-          if (context.user.id == req.session.user_id) {
+          if (context.image.user_id == req.session.user_id) {
             context.own_image = true;
           }
+          connection.query('SELECT `user_id` FROM `Likes` WHERE `post_id` = ?', [image_id], (error, result) => {
+            if (error) {
+              throw error
+            }
+            if(!result[0]){
+              context.liked = false;
+            }
+            else{
+              if (result[0].user_id != req.session.user_id || result[0].user_id == null) {
+                context.liked = false;
+              }
+              else{
+                context.liked = true;
+              }
+            }
+          })
           return res.render('image', context);
         })
       }
@@ -292,9 +308,21 @@ app.post('canvas', (req, res) => {
 })
 
 app.get('/mashup/:image_id', (req,res) => {
-  let context = {};
+  var context = {};
+  if (req.session.user_id == null) {
+    context.not_logged_in = true;
+  }
+  else{
+    context.not_logged_in = false;
+  }
   let image_id = req.params.image_id;
   connection.query('SELECT `Posts`.*, `Users`.`username` FROM `Posts` LEFT JOIN `Users` ON `Users`.`id` = `Posts`.`user_id` WHERE `Posts`.`id` = ?', [image_id], (error, results, next) => {
+    connection.query('UPDATE `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` SET `Users`.`season_score` = `Users`.`season_score` + 1, `Users`.`total_score` = `Users`.`total_score` + 1 WHERE `Posts`.`id` = ?', [parseInt(image_id)], (error,unusedResults) => {
+      if (error) {
+        throw error;
+      }
+    });
+
       if (error) {
         throw error;
       }
@@ -388,7 +416,44 @@ app.get('/user/:username', (req,res) => {
 
 
 
+// api routes
 
+app.get('/api/like/:post_id',(req,res) =>
+ {
+ let post_id = parseInt(req.params.post_id);
+ if (!req.session.user_id)
+    return res.json({success:false,error:'NOT_LOGGED_IN'});
+ connection.query('INSERT INTO `Likes` (`user_id`,`post_id`) VALUES (?,?)',[req.session.user_id,post_id],(error,results) =>
+   {
+   if (error){
+     return res.json({success:false,error});
+   }
+  connection.query('UPDATE `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` SET `Users`.`season_score` = `Users`.`season_score` + 3, `Users`.`total_score` = `Users`.`total_score` + 3 WHERE `Posts`.`id` = ?', [post_id], (error,results) => {
+    if (error) {
+      return res.json({success:false,error});
+    }
+  })
+  return res.json({success:true}); // return the db results as JSON.
+   });
+ });
+
+ app.get('/api/unlike/:post_id',(req,res) =>
+  {
+  let post_id = parseInt(req.params.post_id);
+  if (!req.session.user_id)
+     return res.json({success:false,error:'NOT_LOGGED_IN'});
+  connection.query('DELETE FROM `Likes` WHERE `post_id` = ? AND `user_id` = ?',[post_id, req.session.user_id],(error,results) =>
+    {
+    if (error)
+      return res.json({success:false,error});
+      connection.query('UPDATE `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` SET `Users`.`season_score` = `Users`.`season_score` - 3, `Users`.`total_score` = `Users`.`total_score` - 3 WHERE `Posts`.`id` = ?', [post_id], (error,results) => {
+        if (error) {
+          throw error;
+        }
+      })
+    return res.json({success:true}); // return the db results as JSON.
+    });
+  });
 
 
 

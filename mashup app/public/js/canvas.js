@@ -18,6 +18,8 @@
   var image_source_url = canvas.dataset.imageSourceUrl;
   let source_image = null;
 
+  pencil.className = "selected";
+
   clear_button.addEventListener('click', () => {
     ctx.clearRect(0,0,canvas.width, canvas.height);
     if (source_image) {
