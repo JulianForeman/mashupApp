@@ -1,8 +1,8 @@
 <script src="/js/profile.js" charset="utf-8" defer></script>
 
-<div class="profilecontainer">
+<div class="profilecontainer" style="background-image: url('https://picsum.photos/seed/{{user.username}}/1438/221')">
   <div class="profile_image_container">
-    <img class="profile_image" src="https://picsum.photos/200" alt="">
+    <img class="profile_image" src="https://robohash.org/{{user.username}}" alt="">
   </div>
   <div class="profile_stats_container">
     <div class="user_info_container">
@@ -11,7 +11,6 @@
       <p class="user_info">Likes: {{user.total_likes}}</p>
       <p class="user_info">Mashups: {{user.total_mashups}}</p>
       {{#if own_profile}}
-      <button type="button" name="edit_account" id="edit_account">Edit Account</button>
       <button type="button" name="logout" id="logout">Logout</button>
       {{/if}}
     </div>

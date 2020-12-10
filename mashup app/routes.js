@@ -122,7 +122,7 @@ app.post('/upload', (req,res) => {
   if (!req.session.user_id) {
     return res.send('NOT_LOGGED_IN');
   }
-  connection.query('INSERT INTO `Posts` (`user_id`, `likes`, `mashups`) VALUES (?, 0, 0)', [req.session.user_id], (error,results) => {
+  connection.query('INSERT INTO `Posts` (`user_id`) VALUES (?)', [req.session.user_id], (error,results) => {
     if (error) {
       throw error;
     }
@@ -321,7 +321,37 @@ app.get('/mashup/:image_id', (req,res) => {
       if (error) {
         throw error;
       }
-    });
+    })
+    connection.query('UPDATE `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` SET `Users`.`total_mashups` = `Users`.total_mashups + 1 WHERE `Posts`.`id` = ?', [parseInt(image_id)])
+    connection.query('SELECT `Users`.hidden_score FROM `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` WHERE `Posts`.`id` = ?', [post_id], (error,result) => {
+      if (error) {
+        throw error
+      }
+      let rank_id = 0;
+      let user_score = result[0].hidden_score;
+      if (user_score >= 3000) {
+        rank_id = 7;
+      }
+      else if(user_score >= 2500){
+        rank_id = 6
+      }
+      else if(user_score >= 2000){
+        rank_id = 5
+      }
+      else if(user_score >= 1500){
+        rank_id = 4
+      }
+      else if(user_score >= 1000){
+        rank_id = 3
+      }
+      else if(user_score >= 500){
+        rank_id = 2
+      }
+      else if(user_score >= 0){
+        rank_id = 1
+      }
+      connection.query('UPDATE `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` SET `Users`.`rank_id` = ? WHERE `Posts`.`id` = ?', [rank_id, post_id])
+    })
 
       if (error) {
         throw error;
@@ -433,6 +463,36 @@ app.get('/api/like/:post_id',(req,res) =>
       return res.json({success:false,error});
     }
   })
+  connection.query('UPDATE `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` SET `Users`.`total_likes` = `Users`.total_likes + 1 WHERE `Posts`.`id` = ?', [post_id])
+  connection.query('SELECT `Users`.hidden_score FROM `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` WHERE `Posts`.`id` = ?', [post_id], (error,result) => {
+    if (error) {
+      throw error
+    }
+    let rank_id = 0;
+    let user_score = result[0].hidden_score;
+    if (user_score >= 3000) {
+      rank_id = 7;
+    }
+    else if(user_score >= 2500){
+      rank_id = 6
+    }
+    else if(user_score >= 2000){
+      rank_id = 5
+    }
+    else if(user_score >= 1500){
+      rank_id = 4
+    }
+    else if(user_score >= 1000){
+      rank_id = 3
+    }
+    else if(user_score >= 500){
+      rank_id = 2
+    }
+    else if(user_score >= 0){
+      rank_id = 1
+    }
+    connection.query('UPDATE `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` SET `Users`.`rank_id` = ? WHERE `Posts`.`id` = ?', [rank_id, post_id])
+  })
   return res.json({success:true}); // return the db results as JSON.
    });
  });
@@ -451,9 +511,57 @@ app.get('/api/like/:post_id',(req,res) =>
           throw error;
         }
       })
+      connection.query('UPDATE `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` SET `Users`.`total_likes` = `Users`.total_likes - 1 WHERE `Posts`.`id` = ?', [post_id])
+      connection.query('SELECT `Users`.hidden_score FROM `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` WHERE `Posts`.`id` = ?', [post_id], (error,result) => {
+        if (error) {
+          throw error
+        }
+        let rank_id = 0;
+        let user_score = result[0].hidden_score;
+        if (user_score >= 3000) {
+          rank_id = 7;
+        }
+        else if(user_score >= 2500){
+          rank_id = 6
+        }
+        else if(user_score >= 2000){
+          rank_id = 5
+        }
+        else if(user_score >= 1500){
+          rank_id = 4
+        }
+        else if(user_score >= 1000){
+          rank_id = 3
+        }
+        else if(user_score >= 500){
+          rank_id = 2
+        }
+        else if(user_score >= 0){
+          rank_id = 1
+        }
+        connection.query('UPDATE `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` SET `Users`.`rank_id` = ? WHERE `Posts`.`id` = ?', [rank_id, post_id])
+      })
     return res.json({success:true}); // return the db results as JSON.
     });
   });
+
+  app.get('/api/getlike/:post_id', (req,res) => {
+    let post_id = parseInt(req.params.post_id);
+    if (!req.session.user_id)
+       return res.json({success:false,error:'NOT_LOGGED_IN'});
+    connection.query('SELECT * FROM `Likes` WHERE `post_id` = ? AND `user_id` = ?',[post_id, req.session.user_id],(error,results) =>
+      {
+      if (error)
+        return res.json({success:false,error});
+        results = results[0];
+      if (!results) {
+        return res.json({success:false,error:'NO_RESULTS'});
+      }
+      else if (results){
+        return res.json({success:true});
+      }
+      })
+  })
 
   app.get('/logout', (req,res) => {
     delete req.session.user_id;

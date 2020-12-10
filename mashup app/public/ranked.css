@@ -138,12 +138,12 @@
 .user_container p{
   font-size: 1.5em;
   text-align: left;
-  width: 10em;
+  width: 14em;
 }
 
 .user_image{
   border: 2px solid black;
-  margin-left: 8em;
+  margin-left: 3em;
 }
 
 .user_rank_image{

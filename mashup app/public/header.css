@@ -3,6 +3,7 @@ body{
   background-color: #79acdb;
   background-image: url(/res/background.png);
   background-repeat: repeat;
+  padding-bottom: 1.5em;
 }
 
 div.headercontainer{

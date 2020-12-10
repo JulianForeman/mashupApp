@@ -35,3 +35,16 @@ heart_liked.addEventListener('click', async () => {
 edit.addEventListener('click', () => {
   document.location.href = document.location.origin + '/mashup/' + drawnimagesource;
 });
+
+window.addEventListener('load', async() => {
+  let result = await fetch(document.location.origin + '/api/getlike/' + parseInt(drawnimagesource));
+  let json = await result.json();
+  if (json.success == true) {
+    heart.className = "hide";
+    heartliked.className = "";
+  }
+  else{
+    heart_liked.className = "hide";
+    heart.className = ""
+  }
+})
