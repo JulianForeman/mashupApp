@@ -317,13 +317,13 @@ app.get('/mashup/:image_id', (req,res) => {
   }
   let image_id = req.params.image_id;
   connection.query('SELECT `Posts`.*, `Users`.`username` FROM `Posts` LEFT JOIN `Users` ON `Users`.`id` = `Posts`.`user_id` WHERE `Posts`.`id` = ?', [image_id], (error, results, next) => {
-    connection.query('UPDATE `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` SET `Users`.`season_score` = `Users`.`season_score` + 1, `Users`.`hidden_score` = `Users`.`hidden_score` + 1 WHERE `Posts`.`id` = ?', [parseInt(image_id)], (error,unusedResults) => {
+    connection.query('UPDATE `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` SET `Users`.`season_score` = `Users`.`season_score` + 15, `Users`.`hidden_score` = `Users`.`hidden_score` + 15 WHERE `Posts`.`id` = ?', [parseInt(image_id)], (error,unusedResults) => {
       if (error) {
         throw error;
       }
     })
     connection.query('UPDATE `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` SET `Users`.`total_mashups` = `Users`.total_mashups + 1 WHERE `Posts`.`id` = ?', [parseInt(image_id)])
-    connection.query('SELECT `Users`.hidden_score FROM `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` WHERE `Posts`.`id` = ?', [post_id], (error,result) => {
+    connection.query('SELECT `Users`.hidden_score FROM `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` WHERE `Posts`.`id` = ?', [image_id], (error,result) => {
       if (error) {
         throw error
       }
@@ -350,7 +350,7 @@ app.get('/mashup/:image_id', (req,res) => {
       else if(user_score >= 0){
         rank_id = 1
       }
-      connection.query('UPDATE `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` SET `Users`.`rank_id` = ? WHERE `Posts`.`id` = ?', [rank_id, post_id])
+      connection.query('UPDATE `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` SET `Users`.`rank_id` = ? WHERE `Posts`.`id` = ?', [rank_id, parseInt(image_id)])
     })
 
       if (error) {
@@ -458,7 +458,7 @@ app.get('/api/like/:post_id',(req,res) =>
    if (error){
      return res.json({success:false,error});
    }
-  connection.query('UPDATE `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` SET `Users`.`season_score` = `Users`.`season_score` + 3, `Users`.`hidden_score` = `Users`.`hidden_score` + 3 WHERE `Posts`.`id` = ?', [post_id], (error,results) => {
+  connection.query('UPDATE `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` SET `Users`.`season_score` = `Users`.`season_score` + 303, `Users`.`hidden_score` = `Users`.`hidden_score` + 303 WHERE `Posts`.`id` = ?', [post_id], (error,results) => {
     if (error) {
       return res.json({success:false,error});
     }
@@ -506,7 +506,7 @@ app.get('/api/like/:post_id',(req,res) =>
     {
     if (error)
       return res.json({success:false,error});
-      connection.query('UPDATE `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` SET `Users`.`season_score` = `Users`.`season_score` - 3, `Users`.`hidden_score` = `Users`.`hidden_score` - 3 WHERE `Posts`.`id` = ?', [post_id], (error,results) => {
+      connection.query('UPDATE `Users` LEFT JOIN `Posts` on `Users`.`id` = `Posts`.`user_id` SET `Users`.`season_score` = `Users`.`season_score` - 303, `Users`.`hidden_score` = `Users`.`hidden_score` - 303 WHERE `Posts`.`id` = ?', [post_id], (error,results) => {
         if (error) {
           throw error;
         }
